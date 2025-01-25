@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import AppRoutes from "./util/appRoutes";
+import AppRoutes, { buildRoute } from "./util/appRoutes";
 
 const isPublicRoute = createRouteMatcher([
   AppRoutes.HOME,
@@ -15,7 +15,7 @@ export default clerkMiddleware(async (auth, req) => {
     let path = AppRoutes.SELECT_ORGANIZATION.toString();
 
     if (orgId) {
-      path = `${AppRoutes.ORGANIZATION}/${orgId}`;
+      path = buildRoute(AppRoutes.ORGANIZATION_ID, { id: orgId });
     }
 
     const orgSelection = new URL(path, req.url);
