@@ -1,6 +1,40 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import AppRoutes from "./util/appRoutes";
 
-export default clerkMiddleware();
+const isPublicRoute = createRouteMatcher([
+  AppRoutes.HOME,
+  AppRoutes.SIGN_IN,
+  AppRoutes.SIGN_UP,
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, orgId, redirectToSignIn } = await auth();
+
+  if (userId && isPublicRoute(req)) {
+    let path = AppRoutes.SELECT_ORGANIZATION.toString();
+
+    if (orgId) {
+      path = `${AppRoutes.ORGANIZATION}/${orgId}`;
+    }
+
+    const orgSelection = new URL(path, req.url);
+    return NextResponse.redirect(orgSelection);
+  }
+
+  if (!userId && !isPublicRoute(req)) {
+    return redirectToSignIn({ returnBackUrl: req.url });
+  }
+
+  if (
+    userId &&
+    !orgId &&
+    req.nextUrl.pathname !== AppRoutes.SELECT_ORGANIZATION
+  ) {
+    const orgSelection = new URL(AppRoutes.SELECT_ORGANIZATION, req.url);
+    return NextResponse.redirect(orgSelection);
+  }
+});
 
 export const config = {
   matcher: [
