@@ -42,9 +42,6 @@ export const FormPopover = ({
     onError: (error) => {
       toast.error(error);
     },
-    onComplete: () => {
-      console.log("onComplete");
-    },
   });
 
   const onSubmit = (formData: FormData) => {
