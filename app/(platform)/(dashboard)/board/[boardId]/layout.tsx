@@ -14,10 +14,10 @@ export async function generateMetadata({
   if (!orgId) {
     redirect(AppRoutes.SELECT_ORGANIZATION);
   }
-
+  const { boardId: id } = await params;
   const board = await db.board.findUnique({
     where: {
-      id: params.boardId,
+      id,
       orgId,
     },
   });
@@ -40,9 +40,10 @@ const BoardIdLayout = async ({
     redirect(AppRoutes.SELECT_ORGANIZATION);
   }
 
+  const { boardId: id } = await params;
   const board = await db.board.findUnique({
     where: {
-      id: params.boardId,
+      id,
       orgId,
     },
   });

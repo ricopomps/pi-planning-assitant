@@ -7,12 +7,14 @@ import { ListContainer } from "./_components/list-container";
 interface BoardIdPageProps {
   params: { boardId: string };
 }
-const BoardIdPage = async ({ params: { boardId } }: BoardIdPageProps) => {
+const BoardIdPage = async ({ params }: BoardIdPageProps) => {
   const { orgId } = await auth();
 
   if (!orgId) {
     redirect(AppRoutes.SELECT_ORGANIZATION);
   }
+
+  const { boardId } = await params;
 
   const lists = await db.list.findMany({
     where: {
