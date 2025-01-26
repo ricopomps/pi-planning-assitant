@@ -10,4 +10,8 @@ export const CreateBoard = z.object({
     .min(minimumTitleSize, {
       message: `Minimum length of ${minimumTitleSize} letters is required`,
     }),
+  image: z.string({
+    required_error: "Image is required",
+    invalid_type_error: "Image is invalid",
+  }),
 });
