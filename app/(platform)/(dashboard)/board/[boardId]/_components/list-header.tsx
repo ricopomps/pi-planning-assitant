@@ -81,14 +81,14 @@ export const ListHeader = ({ data }: ListHeaderProps) => {
             defaultValue={title}
             className="text-sm px-[7px] py-1 h-7 font-medium border-transparent hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
           />
-          <input hidden id="id" name="id" value={data.id} onChange={() => {}} />
+          <input hidden name="id" value={data.id} onChange={() => {}} />
           <input
             hidden
-            id="boardId"
             name="boardId"
             value={data.boardId}
             onChange={() => {}}
           />
+          <button type="submit" hidden />
         </form>
       ) : (
         <div
