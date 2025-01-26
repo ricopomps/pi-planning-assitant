@@ -5,7 +5,8 @@ import { db } from "@/lib/db";
 import AppRoutes, { buildRoute } from "@/util/appRoutes";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { UpdateBoard } from "./schema";
+import { redirect } from "next/navigation";
+import { DeleteBoard } from "./schema";
 import { InputType, ReturnType } from "./types";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
@@ -17,25 +18,23 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     };
   }
 
-  const { title, id } = data;
+  const { id } = data;
   let board;
 
   try {
-    board = await db.board.update({
+    board = await db.board.delete({
       where: {
         id,
         orgId,
       },
-      data: {
-        title,
-      },
     });
   } catch (error) {
-    return { error: "Failed to update" };
+    return { error: "Failed to delete" };
   }
 
-  revalidatePath(buildRoute(AppRoutes.BOARD_ID, { boardId: board.id }));
-  return { data: board };
+  const route = buildRoute(AppRoutes.ORGANIZATION_ID, { id: orgId });
+  revalidatePath(route);
+  redirect(route);
 };
 
-export const updateBoard = createSafeAction(UpdateBoard, handler);
+export const deleteBoard = createSafeAction(DeleteBoard, handler);
