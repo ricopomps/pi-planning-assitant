@@ -9,6 +9,7 @@ enum AppRoutes {
   ACTIVITY = `${AppRoutes.ORGANIZATION}/:organizationId/activity`,
   SETTINGS = `${AppRoutes.ORGANIZATION}/:organizationId/settings`,
   BILLING = `${AppRoutes.ORGANIZATION}/:organizationId/billing`,
+  BOARD_ID = `board/:boardId`,
 }
 
 export const buildRoute = (
