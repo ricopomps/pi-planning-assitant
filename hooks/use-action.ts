@@ -1,5 +1,6 @@
 import { ActionState, FieldErrors } from "@/lib/create-safe-action";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type Action<TInput, TOutput> = (
   data: TInput
@@ -19,6 +20,12 @@ export const useAction = <TInput, TOutput>(
   const [error, setError] = useState<string>();
   const [data, setData] = useState<TOutput>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const defaultOnError = (error: string) => {
+    toast.error(error);
+  };
+
+  if (!options.onError) options.onError = defaultOnError;
 
   const execute = useCallback(
     async (input: TInput) => {
