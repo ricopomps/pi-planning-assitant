@@ -16,7 +16,8 @@ interface FormSubmitProps {
     | "ghost"
     | "link"
     | "primary"
-    | "transparent";
+    | "transparent"
+    | "gray";
 }
 
 export const FormSubmit = ({

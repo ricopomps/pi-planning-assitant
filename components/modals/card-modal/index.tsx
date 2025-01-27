@@ -7,6 +7,7 @@ import { CardWithList } from "@/types";
 import { AppApiRoutes, buildRoute } from "@/util/appRoutes";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
+import { Actions } from "./actions";
 import { Description } from "./description";
 import { Header } from "./header";
 
@@ -36,6 +37,7 @@ export const CardModal = () => {
                 )}
               </div>
             </div>
+            {!cardData ? <Actions.Skeleton /> : <Actions data={cardData} />}
           </div>
         </DialogContent>
       </DialogTitle>
