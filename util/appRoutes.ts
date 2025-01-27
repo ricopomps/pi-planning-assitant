@@ -13,7 +13,7 @@ enum AppRoutes {
 }
 
 export const buildRoute = (
-  route: AppRoutes,
+  route: AppRoutes | AppApiRoutes,
   params: Record<string, string | number>
 ) => {
   return Object.keys(params).reduce(
@@ -21,5 +21,10 @@ export const buildRoute = (
     route
   );
 };
+
+export enum AppApiRoutes {
+  BASE = "/api",
+  CARDS = `${AppApiRoutes.BASE}/cards/:cardId`,
+}
 
 export default AppRoutes;
