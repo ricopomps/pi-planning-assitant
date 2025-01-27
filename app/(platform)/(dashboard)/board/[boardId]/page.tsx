@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { ListContainer } from "./_components/list-container";
 
 interface BoardIdPageProps {
-  params: { boardId: string };
+  params: Promise<{ boardId: string }>;
 }
 const BoardIdPage = async ({ params }: BoardIdPageProps) => {
   const { orgId } = await auth();
@@ -14,7 +14,7 @@ const BoardIdPage = async ({ params }: BoardIdPageProps) => {
     redirect(AppRoutes.SELECT_ORGANIZATION);
   }
 
-  const { boardId } = params;
+  const { boardId } = await params;
 
   const lists = await db.list.findMany({
     where: {
