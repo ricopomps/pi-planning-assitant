@@ -13,7 +13,7 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { cardId } = await params;
+    const { cardId } = params;
 
     const card = await db.card.findUnique({
       where: {
