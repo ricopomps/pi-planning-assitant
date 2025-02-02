@@ -2,6 +2,7 @@
 
 import { updateCard } from "@/actions/update-card";
 import { FormInput } from "@/components/form/form-input";
+import { SprintTag } from "@/components/sprint-tag";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAction } from "@/hooks/use-action";
 import { CardWithList } from "@/types";
@@ -58,9 +59,12 @@ export const Header = ({ data }: HeaderProps) => {
             className="font-semibold text-xl px-1 text-neutral-700 bg-transparent border-transparent relative -left-1.5 w-[95%] focus-visible:bg-white focus-visible:border-input mb-0.5 truncate shadow-none"
           />
         </form>
-        <p className="text-sm text-muted-foreground">
-          in list <span className="underline">{data.list.title}</span>
-        </p>
+        <div className="flex justify-between">
+          <p className="text-sm text-muted-foreground">
+            in list <span className="underline">{data.list.title}</span>
+          </p>
+          <SprintTag sprintNumber={data.sprint} cardId={data.id} />
+        </div>
       </div>
     </div>
   );
