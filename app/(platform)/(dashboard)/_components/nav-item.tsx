@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import AppRoutes, { buildRoute } from "@/util/appRoutes";
-import { Activity, CreditCard, Layout, Settings } from "lucide-react";
+import { Activity, CreditCard, Layout, Settings, SquareChartGantt } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -43,19 +43,14 @@ export const NavItem = ({
       href: buildRoute(AppRoutes.ORGANIZATION_ID, { id: organization.id }),
     },
     {
-      label: "Activity",
-      icon: <Activity className="h-4 w-4 mr-2" />,
-      href: buildRoute(AppRoutes.ACTIVITY, { organizationId: organization.id }),
+      label: "Overview",
+      icon: <SquareChartGantt className="h-4 w-4 mr-2" />,
+      href: buildRoute(AppRoutes.BOARD_OVERVIEW, { organizationId: organization.id }),
     },
     {
       label: "Settings",
       icon: <Settings className="h-4 w-4 mr-2" />,
       href: buildRoute(AppRoutes.SETTINGS, { organizationId: organization.id }),
-    },
-    {
-      label: "Billing",
-      icon: <CreditCard className="h-4 w-4 mr-2" />,
-      href: buildRoute(AppRoutes.BILLING, { organizationId: organization.id }),
     },
   ];
 

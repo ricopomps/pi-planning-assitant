@@ -6,6 +6,7 @@ enum AppRoutes {
   ORGANIZATION_ID = "/organization/:id",
   ORGANIZATION = "/organization",
   SELECT_ORGANIZATION = "/select-org",
+  BOARD_OVERVIEW = `${AppRoutes.ORGANIZATION}/:organizationId/boardOverview`,
   ACTIVITY = `${AppRoutes.ORGANIZATION}/:organizationId/activity`,
   SETTINGS = `${AppRoutes.ORGANIZATION}/:organizationId/settings`,
   BILLING = `${AppRoutes.ORGANIZATION}/:organizationId/billing`,
