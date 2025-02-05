@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import AppRoutes, { buildRoute } from "@/util/appRoutes";
-import { Activity, CreditCard, Layout, Settings, SquareChartGantt } from "lucide-react";
+import { Layout, Settings, SquareChartGantt } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 

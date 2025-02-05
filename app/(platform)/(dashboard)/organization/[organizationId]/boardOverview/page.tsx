@@ -1,7 +1,4 @@
-import { Separator } from "@/components/ui/separator";
-import { Suspense } from "react";
-
-const boardOverviewIdPage = async () => {
+const boardOverviewPage = async () => {
   return (
     <div className="flex flex-col space-y-4">
       <h1>desenvolvimento</h1>
@@ -9,4 +6,4 @@ const boardOverviewIdPage = async () => {
   );
 };
 
-export default boardOverviewIdPage;
+export default boardOverviewPage;
