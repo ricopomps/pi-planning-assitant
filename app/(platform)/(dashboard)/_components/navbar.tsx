@@ -18,15 +18,6 @@ export const Navbar = () => {
           <Button
             size="sm"
             variant="primary"
-            className="rounded-sm hidden md:block h-auto py-1.5 px-2"
-          >
-            Create
-          </Button>
-        </FormPopover>
-        <FormPopover>
-          <Button
-            size="sm"
-            variant="primary"
             className="rounded-sm block md:hidden h-auto py-1.5"
           >
             <Plus className="h-4 w-4" />
