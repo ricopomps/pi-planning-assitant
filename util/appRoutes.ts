@@ -26,6 +26,8 @@ export const buildRoute = (
 export enum AppApiRoutes {
   BASE = "/api",
   CARDS = `${AppApiRoutes.BASE}/cards/:cardId`,
+  USERS = `${AppApiRoutes.BASE}/users`,
+  USERS_ORGANIZATION = `${AppApiRoutes.USERS}/organization`,
 }
 
 export default AppRoutes;
