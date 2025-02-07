@@ -16,9 +16,15 @@ interface ListItemProps {
   data: ListWithCards;
   index: number;
   boardId: string;
+  hideAvatar?: boolean;
 }
 
-export const ListItem = ({ data, boardId, index }: ListItemProps) => {
+export const ListItem = ({
+  data,
+  boardId,
+  index,
+  hideAvatar = false,
+}: ListItemProps) => {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
   const { data: usersFromOrg } = useQuery<User[]>({
     queryKey: ["organization", boardId],
@@ -62,9 +68,11 @@ export const ListItem = ({ data, boardId, index }: ListItemProps) => {
                   )}
                 >
                   {data.cards.map((card, index) => {
-                    const assignedUser = usersFromOrg?.find(
-                      (user) => user.id === card.assignedTo
-                    );
+                    const assignedUser = hideAvatar
+                      ? undefined
+                      : usersFromOrg?.find(
+                          (user) => user.id === card.assignedTo
+                        );
                     return (
                       <CardItem
                         key={card.id}
