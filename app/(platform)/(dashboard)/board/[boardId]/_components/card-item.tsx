@@ -1,11 +1,11 @@
 "use client";
 
+import { UserAvatar } from "@/components/assigned-to-tag";
 import { Hint } from "@/components/hint";
 import { useCardModal } from "@/hooks/use-card-modal";
 import { User } from "@clerk/nextjs/server";
 import { Draggable } from "@hello-pangea/dnd";
 import { Card } from "@prisma/client";
-import Image from "next/image";
 
 interface CardItemProps {
   data: Card;
@@ -36,13 +36,7 @@ export const CardItem = ({ data, index, user }: CardItemProps) => {
                 description={`${user.firstName ?? ""} ${user.lastName ?? ""}`}
                 delayDuration={350}
               >
-                <Image
-                  src={user.imageUrl}
-                  alt={`${user.firstName} ${user.lastName} profile pic`}
-                  width={24}
-                  height={24}
-                  className="self-center rounded-lg"
-                />
+                <UserAvatar user={user} displayName={false} />
               </Hint>
             )}
           </div>

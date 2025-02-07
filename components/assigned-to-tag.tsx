@@ -56,7 +56,12 @@ interface AssignedToSelectProps {
   users?: User[];
 }
 
-const UserAvatar = ({ user }: { user: User }) => {
+interface UserAvatarProps {
+  user: User;
+  displayName?: boolean;
+}
+
+export const UserAvatar = ({ user, displayName = true }: UserAvatarProps) => {
   return (
     <div className="flex gap-2 justify-center items-center">
       <Image
@@ -66,7 +71,11 @@ const UserAvatar = ({ user }: { user: User }) => {
         height={24}
         className="self-center rounded-lg"
       />
-      {user.firstName} {user.lastName}
+      {displayName && (
+        <>
+          {user.firstName} {user.lastName}
+        </>
+      )}
     </div>
   );
 };
