@@ -50,7 +50,12 @@ const boardOverviewPage = async () => {
         return (
           <div key={board.id} className="flex gap-2">
             <BoardCard boardTitle={board.title} />
-            <ListContainer boardId={board.id} data={sprintLists} hideAddList />
+            <ListContainer
+              boardId={board.id}
+              data={sprintLists}
+              hideAddList
+              dragMode="changeSprint"
+            />
           </div>
         );
       })}
