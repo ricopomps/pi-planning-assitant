@@ -67,7 +67,11 @@ export const Header = ({ data }: HeaderProps) => {
             </p>
             <AssignedToTag card={data} />
           </>
-          <SprintTag sprintNumber={data.sprint} cardId={data.id} />
+          <SprintTag
+            sprintNumber={data.sprint}
+            cardId={data.id}
+            boardId={data.list.boardId}
+          />
         </div>
       </div>
     </div>

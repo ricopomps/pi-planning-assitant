@@ -2,6 +2,7 @@
 
 import { updateCardSprint } from "@/actions/update-card-sprint";
 import { useAction } from "@/hooks/use-action";
+import Sprints from "@/util/sprints";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -20,12 +21,17 @@ import {
 interface SprintTagProps {
   sprintNumber?: number | null;
   cardId: string;
+  boardId: string;
 }
 
-export const SprintTag = ({ sprintNumber, cardId }: SprintTagProps) => {
+export const SprintTag = ({
+  sprintNumber,
+  cardId,
+  boardId,
+}: SprintTagProps) => {
   return (
     <Badge variant="secondary">
-      <SprintSelect cardId={cardId}>
+      <SprintSelect cardId={cardId} boardId={boardId}>
         {!sprintNumber ? (
           <>
             Add to sprint <Plus className="ml-2 h-4 w-4" />
@@ -44,9 +50,10 @@ export const SprintTag = ({ sprintNumber, cardId }: SprintTagProps) => {
 interface SprintSelectProps {
   children: React.ReactNode;
   cardId: string;
+  boardId: string;
 }
 
-const SprintSelect = ({ children, cardId }: SprintSelectProps) => {
+const SprintSelect = ({ children, cardId, boardId }: SprintSelectProps) => {
   const queryClient = useQueryClient();
   const params = useParams();
 
@@ -61,8 +68,6 @@ const SprintSelect = ({ children, cardId }: SprintSelectProps) => {
   });
 
   const onChange = (e: string) => {
-    const boardId = params.boardId as string;
-
     const sprint = Number.parseInt(e);
 
     execute({ id: cardId, boardId, sprint });
@@ -74,11 +79,11 @@ const SprintSelect = ({ children, cardId }: SprintSelectProps) => {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Sprints</SelectLabel>
-          <SelectItem value="1">1</SelectItem>
-          <SelectItem value="2">2</SelectItem>
-          <SelectItem value="3">3</SelectItem>
-          <SelectItem value="4">4</SelectItem>
-          <SelectItem value="5">5</SelectItem>
+          {Object.values(Sprints).map((sprint) => (
+            <SelectItem key={sprint} value={sprint}>
+              {sprint}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>
