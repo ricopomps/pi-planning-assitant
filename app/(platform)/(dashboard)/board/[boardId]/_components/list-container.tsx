@@ -149,6 +149,21 @@ export const ListContainer = ({
         // Instead of changing the order, update sprint property
         const [movedCard] = sourceList.cards.splice(source.index, 1);
 
+        // Assugn the new listId to the moved card
+        movedCard.sprint = parseInt(destination.droppableId);
+
+        // Add card to the destination list
+        destinationList.cards.splice(destination.index, 0, movedCard);
+
+        sourceList.cards.forEach((card, idx) => {
+          card.order = idx;
+        });
+
+        // Update the order for each card in the destination list
+        destinationList.cards.forEach((card, idx) => {
+          card.order = idx;
+        });
+
         setOrderedData(newOrderedData);
 
         executeUpdateCardSprint({
