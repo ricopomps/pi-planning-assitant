@@ -15,6 +15,7 @@ interface ListContainerProps {
   data: ListWithCards[];
   boardId: string;
   hideAddList?: boolean;
+  hideAddCard?: boolean;
   dragMode?: "reorder" | "changeSprint";
 }
 
@@ -22,6 +23,7 @@ export const ListContainer = ({
   data,
   boardId,
   hideAddList = false,
+  hideAddCard = false,
   dragMode = "reorder",
 }: ListContainerProps) => {
   const queryClient = useQueryClient();
@@ -190,6 +192,8 @@ export const ListContainer = ({
                 index={index}
                 data={list}
                 boardId={boardId}
+                hideAddCard={hideAddCard}
+                isDragDisabled={dragMode === "changeSprint"}
               />
             ))}
             {provided.placeholder}

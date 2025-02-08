@@ -54,6 +54,7 @@ const boardOverviewPage = async () => {
               boardId={board.id}
               data={sprintLists}
               hideAddList
+              hideAddCard
               dragMode="changeSprint"
             />
           </div>
