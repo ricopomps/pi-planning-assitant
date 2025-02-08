@@ -5,7 +5,6 @@ import { useAction } from "@/hooks/use-action";
 import Sprints from "@/util/sprints";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import {
@@ -55,7 +54,6 @@ interface SprintSelectProps {
 
 const SprintSelect = ({ children, cardId, boardId }: SprintSelectProps) => {
   const queryClient = useQueryClient();
-  const params = useParams();
 
   const { execute } = useAction(updateCardSprint, {
     onSuccess: (data) => {
