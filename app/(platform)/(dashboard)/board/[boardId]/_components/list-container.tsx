@@ -13,9 +13,14 @@ import { ListItem } from "./list-item";
 interface ListContainerProps {
   data: ListWithCards[];
   boardId: string;
+  hideAddList?: boolean;
 }
 
-export const ListContainer = ({ data, boardId }: ListContainerProps) => {
+export const ListContainer = ({
+  data,
+  boardId,
+  hideAddList = false,
+}: ListContainerProps) => {
   const [orderedData, setOrderedData] = useState(data);
 
   const { execute: executeUpdateListOrder } = useAction(updateListOrder, {
@@ -122,8 +127,6 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
 
         setOrderedData(newOrderedData);
         executeUpdateCardOrder({ boardId, items: destinationList.cards });
-
-        // TODO: Trigger server action
       }
     }
   };
@@ -148,7 +151,7 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
               );
             })}
             {provided.placeholder}
-            <ListForm />
+            {!hideAddList && <ListForm />}
             <div className="flex-shrink-0 w-1" />
           </ol>
         )}
