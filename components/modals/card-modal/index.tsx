@@ -3,11 +3,12 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCardModal } from "@/hooks/use-card-modal";
 import { fetcher } from "@/lib/fetcher";
-import { CardWithList } from "@/types";
+import { CardWithListAndDependencies } from "@/types";
 import { AppApiRoutes, buildRoute } from "@/util/appRoutes";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { Actions } from "./actions";
+import { CardDependenciesArea } from "./dependencies";
 import { Description } from "./description";
 import { Header } from "./header";
 
@@ -16,7 +17,7 @@ export const CardModal = () => {
   const isOpen = useCardModal((state) => state.isOpen);
   const onClose = useCardModal((state) => state.onClose);
 
-  const { data: cardData } = useQuery<CardWithList>({
+  const { data: cardData } = useQuery<CardWithListAndDependencies>({
     queryKey: ["card", id],
     queryFn: () =>
       fetcher(buildRoute(AppApiRoutes.CARDS, { cardId: id || "" })),
@@ -39,6 +40,14 @@ export const CardModal = () => {
             </div>
             {!cardData ? <Actions.Skeleton /> : <Actions data={cardData} />}
           </div>
+          {cardData && (
+            <CardDependenciesArea
+              cardId={cardData.id}
+              boardId={cardData.list.boardId}
+              dependencies={cardData.dependencies}
+              dependentOn={cardData.dependentOn}
+            />
+          )}
         </DialogContent>
       </DialogTitle>
     </Dialog>

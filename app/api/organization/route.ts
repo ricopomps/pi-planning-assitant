@@ -2,10 +2,7 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ cardId: string }> }
-) {
+export async function GET() {
   try {
     const { userId, orgId } = await auth();
 
@@ -13,30 +10,20 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { cardId } = await params;
-
-    const card = await db.card.findUnique({
+    const boards = await db.board.findMany({
       where: {
-        id: cardId,
-        list: {
-          board: {
-            orgId,
-          },
-        },
+        orgId,
       },
       include: {
-        list: {
-          select: {
-            title: true,
-            boardId: true,
+        lists: {
+          include: {
+            cards: true,
           },
         },
-        dependencies: true,
-        dependentOn: true,
       },
     });
 
-    return NextResponse.json(card);
+    return NextResponse.json(boards);
   } catch (error) {
     console.error(error);
     return new NextResponse("Internal error", { status: 500 });
