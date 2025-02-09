@@ -24,7 +24,7 @@ export const DateTag = ({ dueDate, cardId, boardId }: DateTagProps) => {
 
       toast.success(
         data.dueDate
-          ? `Updated card "${data.title}" due date to "${data.dueDate}`
+          ? `Updated card "${data.title}" due date to "${data.dueDate}"`
           : `Removed card "${data.title}" due date`
       );
     },

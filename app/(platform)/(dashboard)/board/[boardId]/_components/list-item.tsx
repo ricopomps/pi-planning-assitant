@@ -2,7 +2,7 @@
 
 import { fetcher } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
-import { ListWithCards } from "@/types";
+import { ListWithCardsAndDependencies } from "@/types";
 import { AppApiRoutes } from "@/util/appRoutes";
 import { User } from "@clerk/nextjs/server";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
@@ -13,7 +13,7 @@ import { CardItem } from "./card-item";
 import { ListHeader } from "./list-header";
 
 interface ListItemProps {
-  data: ListWithCards;
+  data: ListWithCardsAndDependencies;
   index: number;
   boardId: string;
   hideAvatar?: boolean;

@@ -10,7 +10,6 @@ import { useCardModal } from "@/hooks/use-card-modal";
 import { CardWithListAndDependencies } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { Copy, Trash } from "lucide-react";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { LinkComponent } from "./link";
 
@@ -19,7 +18,6 @@ interface ActionsProps {
 }
 
 export const Actions = ({ data }: ActionsProps) => {
-  const params = useParams();
   const cardModal = useCardModal();
   const queryClient = useQueryClient();
 
@@ -54,22 +52,16 @@ export const Actions = ({ data }: ActionsProps) => {
   });
 
   const onCopy = () => {
-    const boardId = params.boardId as string;
-
-    executeCopyCard({ boardId, id: data.id });
+    executeCopyCard({ boardId: data.list.boardId, id: data.id });
   };
 
   const onDelete = () => {
-    const boardId = params.boardId as string;
-
-    executeDeleteCard({ boardId, id: data.id });
+    executeDeleteCard({ boardId: data.list.boardId, id: data.id });
   };
 
   const onLink = (dependencyCardId: string) => {
-    const boardId = params.boardId as string;
-
     executeUpdateCardDependency({
-      boardId,
+      boardId: data.list.boardId,
       id: data.id,
       dependencyCardId,
     });
