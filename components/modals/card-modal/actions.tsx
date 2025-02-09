@@ -7,14 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAction } from "@/hooks/use-action";
 import { useCardModal } from "@/hooks/use-card-modal";
-import { CardWithList } from "@/types";
+import { CardWithListAndDependencies } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { Copy, Link2, Trash } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { LinkComponent } from "./link";
 
 interface ActionsProps {
-  data: CardWithList;
+  data: CardWithListAndDependencies;
 }
 
 export const Actions = ({ data }: ActionsProps) => {
@@ -64,13 +65,13 @@ export const Actions = ({ data }: ActionsProps) => {
     executeDeleteCard({ boardId, id: data.id });
   };
 
-  const onLink = () => {
+  const onLink = (dependencyCardId: string) => {
     const boardId = params.boardId as string;
 
     executeUpdateCardDependency({
       boardId,
       id: data.id,
-      dependencyCardId: "5453d2c9-bdc6-4d34-9b7d-5c0514aaf4dd",
+      dependencyCardId,
     });
   };
 
@@ -100,28 +101,12 @@ export const Actions = ({ data }: ActionsProps) => {
         <Trash className="h-4 w-4 mr-2" />
         Delete
       </Button>
-      <LinkComponent actionLoading={actionLoading} onLink={onLink} />
+      <LinkComponent
+        actionLoading={actionLoading}
+        onLink={onLink}
+        card={data}
+      />
     </div>
-  );
-};
-
-interface LinkComponentProps {
-  onLink: () => void;
-  actionLoading: boolean;
-}
-
-const LinkComponent = ({ onLink, actionLoading }: LinkComponentProps) => {
-  return (
-    <Button
-      onClick={onLink}
-      disabled={actionLoading}
-      variant="gray"
-      className="w-full justify-start"
-      size="inline"
-    >
-      <Link2 className="h-4 w-4 mr-2" />
-      Link
-    </Button>
   );
 };
 

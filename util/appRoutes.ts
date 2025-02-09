@@ -28,6 +28,7 @@ export enum AppApiRoutes {
   CARDS = `${AppApiRoutes.BASE}/cards/:cardId`,
   USERS = `${AppApiRoutes.BASE}/users`,
   USERS_ORGANIZATION = `${AppApiRoutes.USERS}/organization`,
+  ORGANIZATION = `${AppApiRoutes.BASE}/organization`,
 }
 
 export default AppRoutes;
