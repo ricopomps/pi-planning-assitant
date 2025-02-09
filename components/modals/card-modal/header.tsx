@@ -2,6 +2,7 @@
 
 import { updateCard } from "@/actions/update-card";
 import { AssignedToTag } from "@/components/assigned-to-tag";
+import { DateTag } from "@/components/date-tag";
 import { FormInput } from "@/components/form/form-input";
 import { SprintTag } from "@/components/sprint-tag";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,6 +70,13 @@ export const Header = ({ data }: HeaderProps) => {
           </>
           <SprintTag
             sprintNumber={data.sprint}
+            cardId={data.id}
+            boardId={data.list.boardId}
+          />
+        </div>
+        <div className="p-0.5">
+          <DateTag
+            dueDate={data.dueDate ?? undefined}
             cardId={data.id}
             boardId={data.list.boardId}
           />
