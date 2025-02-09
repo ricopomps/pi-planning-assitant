@@ -1,8 +1,12 @@
 "use client";
 
+import { fetcher } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
 import { ListWithCards } from "@/types";
+import { AppApiRoutes } from "@/util/appRoutes";
+import { User } from "@clerk/nextjs/server";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
+import { useQuery } from "@tanstack/react-query";
 import { ElementRef, useRef, useState } from "react";
 import { CardForm } from "./card-form";
 import { CardItem } from "./card-item";
@@ -11,11 +15,21 @@ import { ListHeader } from "./list-header";
 interface ListItemProps {
   data: ListWithCards;
   index: number;
+  boardId: string;
+  hideAvatar?: boolean;
 }
 
-export const ListItem = ({ data, index }: ListItemProps) => {
+export const ListItem = ({
+  data,
+  boardId,
+  index,
+  hideAvatar = false,
+}: ListItemProps) => {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
-
+  const { data: usersFromOrg } = useQuery<User[]>({
+    queryKey: ["organization", boardId],
+    queryFn: () => fetcher(AppApiRoutes.USERS_ORGANIZATION),
+  });
   const [isEditing, setIsEditing] = useState(false);
 
   const enableEditing = () => {
@@ -53,9 +67,21 @@ export const ListItem = ({ data, index }: ListItemProps) => {
                     data.cards.length > 0 ? "mt-2" : "mt-0"
                   )}
                 >
-                  {data.cards.map((card, index) => (
-                    <CardItem key={card.id} index={index} data={card} />
-                  ))}
+                  {data.cards.map((card, index) => {
+                    const assignedUser = hideAvatar
+                      ? undefined
+                      : usersFromOrg?.find(
+                          (user) => user.id === card.assignedTo
+                        );
+                    return (
+                      <CardItem
+                        key={card.id}
+                        index={index}
+                        data={card}
+                        user={assignedUser}
+                      />
+                    );
+                  })}
                   {provided.placeholder}
                 </ol>
               )}

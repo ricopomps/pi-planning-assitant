@@ -53,6 +53,7 @@ model Card {
     order       Int
     description String? @db.Text
     sprint      Int?
+    assignedTo  String?
 
     listId String
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)

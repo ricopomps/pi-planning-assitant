@@ -1,6 +1,7 @@
 "use client";
 
 import { updateCard } from "@/actions/update-card";
+import { AssignedToTag } from "@/components/assigned-to-tag";
 import { FormInput } from "@/components/form/form-input";
 import { SprintTag } from "@/components/sprint-tag";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -60,9 +61,12 @@ export const Header = ({ data }: HeaderProps) => {
           />
         </form>
         <div className="flex justify-between">
-          <p className="text-sm text-muted-foreground">
-            in list <span className="underline">{data.list.title}</span>
-          </p>
+          <>
+            <p className="text-sm text-muted-foreground">
+              in list <span className="underline">{data.list.title}</span>
+            </p>
+            <AssignedToTag card={data} />
+          </>
           <SprintTag sprintNumber={data.sprint} cardId={data.id} />
         </div>
       </div>

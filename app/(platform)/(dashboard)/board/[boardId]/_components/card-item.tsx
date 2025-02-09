@@ -1,15 +1,19 @@
 "use client";
 
+import { UserAvatar } from "@/components/assigned-to-tag";
+import { Hint } from "@/components/hint";
 import { useCardModal } from "@/hooks/use-card-modal";
+import { User } from "@clerk/nextjs/server";
 import { Draggable } from "@hello-pangea/dnd";
 import { Card } from "@prisma/client";
 
 interface CardItemProps {
   data: Card;
   index: number;
+  user?: User;
 }
 
-export const CardItem = ({ data, index }: CardItemProps) => {
+export const CardItem = ({ data, index, user }: CardItemProps) => {
   const cardModal = useCardModal();
 
   return (
@@ -25,7 +29,17 @@ export const CardItem = ({ data, index }: CardItemProps) => {
             cardModal.onOpen(data.id);
           }}
         >
-          {data.title}
+          <div className="flex justify-between items-center">
+            <div>{data.title}</div>
+            {user && (
+              <Hint
+                description={`${user.firstName ?? ""} ${user.lastName ?? ""}`}
+                delayDuration={350}
+              >
+                <UserAvatar user={user} displayName={false} />
+              </Hint>
+            )}
+          </div>
         </div>
       )}
     </Draggable>
