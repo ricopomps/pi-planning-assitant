@@ -99,7 +99,6 @@ const AssignedToSelect = ({
 
   const onChange = (e: string) => {
     const boardId = params.boardId as string;
-    console.log("event", e);
 
     execute({ id: cardId, boardId, assignedTo: e });
   };

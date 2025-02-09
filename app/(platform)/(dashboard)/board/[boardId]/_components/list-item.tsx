@@ -17,6 +17,8 @@ interface ListItemProps {
   index: number;
   boardId: string;
   hideAvatar?: boolean;
+  isDragDisabled?: boolean;
+  hideAddCard?: boolean;
 }
 
 export const ListItem = ({
@@ -24,6 +26,8 @@ export const ListItem = ({
   boardId,
   index,
   hideAvatar = false,
+  isDragDisabled = false,
+  hideAddCard = false,
 }: ListItemProps) => {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
   const { data: usersFromOrg } = useQuery<User[]>({
@@ -45,7 +49,11 @@ export const ListItem = ({
   };
 
   return (
-    <Draggable draggableId={data.id} index={index}>
+    <Draggable
+      draggableId={data.id}
+      index={index}
+      isDragDisabled={isDragDisabled}
+    >
       {(provided) => (
         <li
           {...provided.draggableProps}
@@ -86,13 +94,15 @@ export const ListItem = ({
                 </ol>
               )}
             </Droppable>
-            <CardForm
-              listId={data.id}
-              ref={textareaRef}
-              isEditing={isEditing}
-              enableEditing={enableEditing}
-              disableEditing={disableEditing}
-            />
+            {!hideAddCard && (
+              <CardForm
+                listId={data.id}
+                ref={textareaRef}
+                isEditing={isEditing}
+                enableEditing={enableEditing}
+                disableEditing={disableEditing}
+              />
+            )}
           </div>
         </li>
       )}

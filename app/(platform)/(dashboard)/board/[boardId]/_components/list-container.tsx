@@ -1,21 +1,32 @@
 "use client";
 
 import { updateCardOrder } from "@/actions/update-card-order";
+import { updateCardSprint } from "@/actions/update-card-sprint";
 import { updateListOrder } from "@/actions/update-list-order";
 import { useAction } from "@/hooks/use-action";
 import { ListWithCards } from "@/types";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ListForm } from "./list-form";
 import { ListItem } from "./list-item";
-
 interface ListContainerProps {
   data: ListWithCards[];
   boardId: string;
+  hideAddList?: boolean;
+  hideAddCard?: boolean;
+  dragMode?: "reorder" | "changeSprint";
 }
 
-export const ListContainer = ({ data, boardId }: ListContainerProps) => {
+export const ListContainer = ({
+  data,
+  boardId,
+  hideAddList = false,
+  hideAddCard = false,
+  dragMode = "reorder",
+}: ListContainerProps) => {
+  const queryClient = useQueryClient();
   const [orderedData, setOrderedData] = useState(data);
 
   const { execute: executeUpdateListOrder } = useAction(updateListOrder, {
@@ -26,7 +37,19 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
 
   const { execute: executeUpdateCardOrder } = useAction(updateCardOrder, {
     onSuccess: () => {
-      toast.success("Card reordered");
+      toast.success(
+        dragMode === "reorder" ? "Card reordered" : "Sprint updated"
+      );
+    },
+  });
+
+  const { execute: executeUpdateCardSprint } = useAction(updateCardSprint, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["card", data.id],
+      });
+
+      toast.success(`Updated card "${data.title}" to sprint "${data.sprint}`);
     },
   });
 
@@ -84,29 +107,52 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
       // Check if cards exists on the destinationList
       if (!destinationList.cards) destinationList.cards = [];
 
-      // Moving the card in the same list
-      if (source.droppableId === destination.droppableId) {
-        const reorderedCards = reorder(
-          sourceList.cards,
-          source.index,
-          destination.index
-        );
+      if (dragMode === "reorder") {
+        // Moving within the same list
+        if (source.droppableId === destination.droppableId) {
+          const reorderedCards = reorder(
+            sourceList.cards,
+            source.index,
+            destination.index
+          );
 
-        reorderedCards.forEach((card, idx) => {
-          card.order = idx;
-        });
+          reorderedCards.forEach((card, idx) => {
+            card.order = idx;
+          });
 
-        sourceList.cards = reorderedCards;
+          sourceList.cards = reorderedCards;
 
-        setOrderedData(newOrderedData);
-        executeUpdateCardOrder({ boardId, items: reorderedCards });
-        // User moves the card to another list
-      } else {
-        // Remove card From the source list
+          setOrderedData(newOrderedData);
+          executeUpdateCardOrder({ boardId, items: reorderedCards });
+          // User moves the card to another list
+        } else {
+          // Remove card From the source list
+          const [movedCard] = sourceList.cards.splice(source.index, 1);
+
+          // Assugn the new listId to the moved card
+          movedCard.listId = destination.droppableId;
+
+          // Add card to the destination list
+          destinationList.cards.splice(destination.index, 0, movedCard);
+
+          sourceList.cards.forEach((card, idx) => {
+            card.order = idx;
+          });
+
+          // Update the order for each card in the destination list
+          destinationList.cards.forEach((card, idx) => {
+            card.order = idx;
+          });
+
+          setOrderedData(newOrderedData);
+          executeUpdateCardOrder({ boardId, items: destinationList.cards });
+        }
+      } else if (dragMode === "changeSprint") {
+        // Instead of changing the order, update sprint property
         const [movedCard] = sourceList.cards.splice(source.index, 1);
 
         // Assugn the new listId to the moved card
-        movedCard.listId = destination.droppableId;
+        movedCard.sprint = parseInt(destination.droppableId);
 
         // Add card to the destination list
         destinationList.cards.splice(destination.index, 0, movedCard);
@@ -121,9 +167,12 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
         });
 
         setOrderedData(newOrderedData);
-        executeUpdateCardOrder({ boardId, items: destinationList.cards });
 
-        // TODO: Trigger server action
+        executeUpdateCardSprint({
+          boardId,
+          id: movedCard.id,
+          sprint: parseInt(destination.droppableId),
+        });
       }
     }
   };
@@ -137,18 +186,18 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
             ref={provided.innerRef}
             className="flex gap-x-3 h-full"
           >
-            {orderedData.map((list, index) => {
-              return (
-                <ListItem
-                  key={list.id}
-                  index={index}
-                  data={list}
-                  boardId={boardId}
-                />
-              );
-            })}
+            {orderedData.map((list, index) => (
+              <ListItem
+                key={list.id}
+                index={index}
+                data={list}
+                boardId={boardId}
+                hideAddCard={hideAddCard}
+                isDragDisabled={dragMode === "changeSprint"}
+              />
+            ))}
             {provided.placeholder}
-            <ListForm />
+            {!hideAddList && <ListForm />}
             <div className="flex-shrink-0 w-1" />
           </ol>
         )}
