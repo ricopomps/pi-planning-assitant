@@ -31,6 +31,8 @@ export async function GET(
             boardId: true,
           },
         },
+        dependencies: true,
+        dependentOn: true,
       },
     });
 

@@ -61,6 +61,7 @@ const CardDateTag = ({ dueDate }: CardDateTagProps) => {
     </Badge>
   );
 };
+
 interface CardUserAvatarProps {
   user?: User;
 }
