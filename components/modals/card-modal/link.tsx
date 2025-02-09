@@ -37,8 +37,7 @@ export const LinkComponent = ({
   actionLoading,
   card,
 }: LinkComponentProps) => {
-  const { organization: activeOrganization, isLoaded: isLoadedOrg } =
-    useOrganization();
+  const { organization: activeOrganization } = useOrganization();
 
   const { data: boards } = useQuery<BoardWithLists[]>({
     queryKey: ["organization_boards", activeOrganization?.id],
