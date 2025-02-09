@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { ListWithCards } from "@/types";
+import { ListWithCardsAndDependencies } from "@/types";
 import AppRoutes from "@/util/appRoutes";
 import Sprints from "@/util/sprints";
 import { auth } from "@clerk/nextjs/server";
@@ -22,6 +22,11 @@ const boardOverviewPage = async () => {
       lists: {
         include: {
           cards: {
+            include: {
+              dependencies: true,
+              dependentOn: true,
+              list: true,
+            },
             orderBy: {
               order: "asc",
             },
@@ -34,19 +39,19 @@ const boardOverviewPage = async () => {
   return (
     <div className="p-4 h-full overflow-x-auto space-y-2">
       {boards.map((board) => {
-        const sprintLists: ListWithCards[] = Object.values(Sprints).map(
-          (sprint) => ({
-            title: `Sprint ${sprint}`,
-            boardId: board.id,
-            cards: board.lists
-              .flatMap((list) => list.cards)
-              .filter((card) => card.sprint === parseInt(sprint)),
-            id: sprint,
-            order: parseInt(sprint),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-        );
+        const sprintLists: ListWithCardsAndDependencies[] = Object.values(
+          Sprints
+        ).map((sprint) => ({
+          title: `Sprint ${sprint}`,
+          boardId: board.id,
+          cards: board.lists
+            .flatMap((list) => list.cards)
+            .filter((card) => card.sprint === parseInt(sprint)),
+          id: sprint,
+          order: parseInt(sprint),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }));
         return (
           <div key={board.id} className="flex gap-2">
             <BoardCard boardTitle={board.title} />

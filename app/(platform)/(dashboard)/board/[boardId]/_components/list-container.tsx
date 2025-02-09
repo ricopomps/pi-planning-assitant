@@ -4,7 +4,7 @@ import { updateCardOrder } from "@/actions/update-card-order";
 import { updateCardSprint } from "@/actions/update-card-sprint";
 import { updateListOrder } from "@/actions/update-list-order";
 import { useAction } from "@/hooks/use-action";
-import { ListWithCards } from "@/types";
+import { ListWithCardsAndDependencies } from "@/types";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { ListForm } from "./list-form";
 import { ListItem } from "./list-item";
 interface ListContainerProps {
-  data: ListWithCards[];
+  data: ListWithCardsAndDependencies[];
   boardId: string;
   hideAddList?: boolean;
   hideAddCard?: boolean;
@@ -49,7 +49,7 @@ export const ListContainer = ({
         queryKey: ["card", data.id],
       });
 
-      toast.success(`Updated card "${data.title}" to sprint "${data.sprint}`);
+      toast.success(`Updated card "${data.title}" to sprint "${data.sprint}"`);
     },
   });
 

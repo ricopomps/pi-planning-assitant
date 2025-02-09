@@ -4,19 +4,22 @@ import { UserAvatar } from "@/components/assigned-to-tag";
 import { Hint } from "@/components/hint";
 import { Badge } from "@/components/ui/badge";
 import { useCardModal } from "@/hooks/use-card-modal";
+import { useDependency } from "@/hooks/use-dependency";
+import { cn } from "@/lib/utils";
+import { CardWithListAndDependencies } from "@/types";
 import { User } from "@clerk/nextjs/server";
 import { Draggable } from "@hello-pangea/dnd";
-import { Card } from "@prisma/client";
 import { format, isBefore } from "date-fns";
 
 interface CardItemProps {
-  data: Card;
+  data: CardWithListAndDependencies;
   index: number;
   user?: User;
 }
 
 export const CardItem = ({ data, index, user }: CardItemProps) => {
   const cardModal = useCardModal();
+  const cardDependency = useDependency();
 
   return (
     <Draggable draggableId={data.id} index={index}>
@@ -26,12 +29,24 @@ export const CardItem = ({ data, index, user }: CardItemProps) => {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           role="button"
-          className="truncate border-2 border-transparent hover:border-black py-2 px-3 text-sm bg-white rounded-sm shadow-sm"
+          className={cn(
+            "truncate border-2 border-transparent hover:border-black py-2 px-3 text-sm bg-white rounded-sm shadow-sm",
+            cardDependency.selectedCard?.id === data.id && "bg-yellow-300",
+            cardDependency.dependencies.some((card) => card.id === data.id) &&
+              "bg-green-300",
+            cardDependency.dependentOn.some((card) => card.id === data.id) &&
+              "bg-red-300"
+          )}
           onClick={() => {
             cardModal.onOpen(data.id);
           }}
         >
-          <div className="grid items-center gap-2">
+          <div
+            className="grid items-center gap-2 "
+            onMouseEnter={() => {
+              cardDependency.setSelectedCard(data);
+            }}
+          >
             <div className="flex justify-between items-center gap-2">
               <div>{data.title}</div>
               <CardUserAvatar user={user} />

@@ -23,6 +23,11 @@ const BoardIdPage = async ({ params }: BoardIdPageProps) => {
     },
     include: {
       cards: {
+        include: {
+          dependencies: true,
+          dependentOn: true,
+          list: true,
+        },
         orderBy: {
           order: "asc",
         },
