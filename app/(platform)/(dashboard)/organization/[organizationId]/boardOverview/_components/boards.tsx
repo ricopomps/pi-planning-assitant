@@ -40,6 +40,7 @@ export const BoardsOverviewList = ({ boards }: BoardsOverviewListProps) => {
               hideAddList
               hideAddCard
               dragMode="changeSprint"
+              disableActions
             />
           </div>
         );

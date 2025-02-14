@@ -12,9 +12,14 @@ import { ListOptions } from "./list-options";
 interface ListHeaderProps {
   data: List;
   onAddCard: () => void;
+  disableActions?: boolean;
 }
 
-export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
+export const ListHeader = ({
+  data,
+  onAddCard,
+  disableActions,
+}: ListHeaderProps) => {
   const formRef = useRef<ElementRef<"form">>(null);
   const inputRef = useRef<ElementRef<"input">>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -73,7 +78,7 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
 
   return (
     <div className="pt-2 px-2 text-sm font-semibold flex justify-between items-center gap-x-2">
-      {isEditing ? (
+      {isEditing && !disableActions ? (
         <form action={onSubmit} ref={formRef} className="flex-1 px-[2px]">
           <FormInput
             ref={inputRef}
@@ -100,7 +105,7 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
           {title}
         </div>
       )}
-      <ListOptions onAddCard={onAddCard} data={data} />
+      {!disableActions && <ListOptions onAddCard={onAddCard} data={data} />}
     </div>
   );
 };

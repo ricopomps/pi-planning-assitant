@@ -19,6 +19,7 @@ interface ListItemProps {
   hideAvatar?: boolean;
   isDragDisabled?: boolean;
   hideAddCard?: boolean;
+  disableActions?: boolean;
 }
 
 export const ListItem = ({
@@ -28,6 +29,7 @@ export const ListItem = ({
   hideAvatar = false,
   isDragDisabled = false,
   hideAddCard = false,
+  disableActions = false,
 }: ListItemProps) => {
   const textareaRef = useRef<ElementRef<"textarea">>(null);
   const { data: usersFromOrg } = useQuery<User[]>({
@@ -64,7 +66,11 @@ export const ListItem = ({
             {...provided.dragHandleProps}
             className="w-full rounded-md bg-[#f1f2f4] shadow-md pb-2"
           >
-            <ListHeader onAddCard={enableEditing} data={data} />
+            <ListHeader
+              onAddCard={enableEditing}
+              data={data}
+              disableActions={disableActions}
+            />
             <Droppable droppableId={data.id} type="card">
               {(provided) => (
                 <ol
