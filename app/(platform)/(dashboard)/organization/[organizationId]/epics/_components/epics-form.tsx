@@ -2,7 +2,6 @@
 
 import { createEpic as createEpicAction } from "@/actions/create-epic";
 import { updateEpic } from "@/actions/update-epic";
-import { FormErrors } from "@/components/form/form-errors";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -42,6 +41,15 @@ export const EpicsForm = () => {
       onError: (error) => {
         toast.error(error);
       },
+      onComplete: () => {
+        if (fieldErrorsCreateEpic) {
+          Object.values(fieldErrorsCreateEpic).forEach((messages) => {
+            (messages as string[]).forEach((message) =>
+              toast.error(`${message}`, { position: "top-right" })
+            );
+          });
+        }
+      },
     });
 
   const { execute: executeUpdateEpic, fieldErrors: fieldErrorsUpdateEpic } =
@@ -55,6 +63,15 @@ export const EpicsForm = () => {
       },
       onError: (error) => {
         toast.error(error);
+      },
+      onComplete: () => {
+        if (fieldErrorsUpdateEpic) {
+          Object.values(fieldErrorsUpdateEpic).forEach((messages) => {
+            (messages as string[]).forEach((message) =>
+              toast.error(`${message}`, { position: "top-right" })
+            );
+          });
+        }
       },
     });
 
@@ -92,8 +109,6 @@ export const EpicsForm = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <FormErrors id="title" errors={fieldErrorsCreateEpic} />
-          <FormErrors id="title" errors={fieldErrorsUpdateEpic} />
         </div>
         <div className="mb-2">
           <Label
@@ -116,8 +131,6 @@ export const EpicsForm = () => {
               else setSprints(sprint);
             }}
           />
-          <FormErrors id="sprint" errors={fieldErrorsCreateEpic} />
-          <FormErrors id="sprint" errors={fieldErrorsUpdateEpic} />
         </div>
         <Button
           onClick={() => {
