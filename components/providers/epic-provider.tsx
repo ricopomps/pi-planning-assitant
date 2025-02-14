@@ -24,6 +24,12 @@ const EpicComponent = () => {
   const { organization: activeOrganization } = useOrganization();
 
   const epicsFromOrganization = activeOrganization?.publicMetadata?.epics;
+
+  useEffect(() => {
+    setEpics([]);
+    setSelectedEpic(undefined);
+  }, [activeOrganization, setEpics, setSelectedEpic]);
+
   useEffect(() => {
     if (!epics?.length && epicsFromOrganization) {
       const epicsFromOrganizationOrdered = epicsFromOrganization.sort(
