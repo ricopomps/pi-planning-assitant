@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import AppRoutes, { buildRoute } from "@/util/appRoutes";
-import { Layout, Settings, SquareChartGantt } from "lucide-react";
+import { Layout, List, Settings, SquareChartGantt } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -45,12 +45,19 @@ export const NavItem = ({
     {
       label: "Overview",
       icon: <SquareChartGantt className="h-4 w-4 mr-2" />,
-      href: buildRoute(AppRoutes.BOARD_OVERVIEW, { organizationId: organization.id }),
+      href: buildRoute(AppRoutes.BOARD_OVERVIEW, {
+        organizationId: organization.id,
+      }),
     },
     {
       label: "Settings",
       icon: <Settings className="h-4 w-4 mr-2" />,
       href: buildRoute(AppRoutes.SETTINGS, { organizationId: organization.id }),
+    },
+    {
+      label: "Epics",
+      icon: <List className="h-4 w-4 mr-2" />,
+      href: buildRoute(AppRoutes.EPICS, { organizationId: organization.id }),
     },
   ];
 

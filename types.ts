@@ -10,3 +10,13 @@ export type CardWithListAndDependencies = CardWithList & {
   dependentOn: Card[];
 };
 export type BoardWithLists = Board & { lists: ListWithCards[] };
+export type BoardWithListsAndDependencies = Board & {
+  lists: ListWithCardsAndDependencies[];
+};
+
+export interface Epic {
+  id: string;
+  sprints: number;
+  title: string;
+  order: number;
+}
