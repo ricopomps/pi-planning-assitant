@@ -2,6 +2,7 @@
 
 import { createEpic as createEpicAction } from "@/actions/create-epic";
 import { updateEpic } from "@/actions/update-epic";
+import { FormErrors } from "@/components/form/form-errors";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,31 +29,34 @@ export const EpicsForm = () => {
     !createEpic ? selectedEpic?.sprints || 6 : 6
   );
 
-  const { execute: executeCreateEpic } = useAction(createEpicAction, {
-    onSuccess: (newEpic) => {
-      toast.success("Epic created!");
-      setEpics([...epics, newEpic]);
-      setSelectedEpic(newEpic);
-      setCreateEpic(false);
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  const { execute: executeCreateEpic, fieldErrors: fieldErrorsCreateEpic } =
+    useAction(createEpicAction, {
+      onSuccess: (newEpic) => {
+        toast.success("Epic created!");
+        setEpics([...epics, newEpic]);
+        setSelectedEpic(newEpic);
+        setCreateEpic(false);
+        setTitle("");
+        setSprints(6);
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+    });
 
-  const { execute: executeUpdateEpic } = useAction(updateEpic, {
-    onSuccess: (updatedEpic) => {
-      toast.success("Epic updated!");
-
-      setEpics(
-        epics.map((epic) => (epic.id === updatedEpic.id ? updatedEpic : epic))
-      );
-      setSelectedEpic(updatedEpic);
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  const { execute: executeUpdateEpic, fieldErrors: fieldErrorsUpdateEpic } =
+    useAction(updateEpic, {
+      onSuccess: (updatedEpic) => {
+        toast.success("Epic updated!");
+        setEpics(
+          epics.map((epic) => (epic.id === updatedEpic.id ? updatedEpic : epic))
+        );
+        setSelectedEpic(updatedEpic);
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+    });
 
   useEffect(() => {
     setTitle(!createEpic ? selectedEpic?.title || "" : "");
@@ -88,6 +92,8 @@ export const EpicsForm = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+          <FormErrors id="title" errors={fieldErrorsCreateEpic} />
+          <FormErrors id="title" errors={fieldErrorsUpdateEpic} />
         </div>
         <div className="mb-2">
           <Label
@@ -110,6 +116,8 @@ export const EpicsForm = () => {
               else setSprints(sprint);
             }}
           />
+          <FormErrors id="sprint" errors={fieldErrorsCreateEpic} />
+          <FormErrors id="sprint" errors={fieldErrorsUpdateEpic} />
         </div>
         <Button
           onClick={() => {
@@ -118,7 +126,6 @@ export const EpicsForm = () => {
             } else {
               handleCreate();
             }
-            setTitle("");
           }}
         >
           {update ? "Update" : "Create"}

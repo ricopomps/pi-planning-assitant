@@ -12,8 +12,8 @@ export const CreateEpic = z.object({
     }),
   sprints: z
     .number({
-      required_error: "Image is required",
-      invalid_type_error: "Image is invalid",
+      required_error: "Sprint is required",
+      invalid_type_error: "Sprint is invalid",
     })
     .min(1)
     .max(6),
