@@ -11,7 +11,7 @@ import {
 import { useEpic } from "@/hooks/use-epic";
 
 export const EpicSelector = () => {
-  const { selectedEpic, setSelectedEpic, epics, getSprintNumbers } = useEpic();
+  const { selectedEpic, setSelectedEpic, epics } = useEpic();
 
   const onChange = (e: string) => {
     const newSelectedEpic = epics.find((epic) => epic.id === e);
@@ -25,7 +25,9 @@ export const EpicSelector = () => {
       <div>
         <Select onValueChange={onChange}>
           <SelectTrigger minimal>
-            <Badge variant="outline">{selectedEpic.title}</Badge>
+            <Badge className="p-2" variant="outline">
+              {selectedEpic.title}
+            </Badge>
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -39,11 +41,30 @@ export const EpicSelector = () => {
           </SelectContent>
         </Select>
       </div>
+      <SprintsBadge />
+    </div>
+  );
+};
+
+const SprintsBadge = () => {
+  const { getSprintNumbers } = useEpic();
+
+  return (
+    <Badge
+      variant="secondary"
+      className="flex items-center gap-2 p-2 rounded-lg shadow-md"
+    >
+      <span className="font-semibold text-sm">Sprints:</span>
       <div className="flex gap-1">
         {getSprintNumbers().map((sprint) => (
-          <div key={sprint}>{sprint}</div>
+          <span
+            key={sprint}
+            className="bg-gray-200 text-gray-800 px-0.5 py-0.5 rounded-full text-xs font-medium shadow-sm"
+          >
+            {sprint}
+          </span>
         ))}
       </div>
-    </div>
+    </Badge>
   );
 };

@@ -2,7 +2,7 @@
 
 import { updateCardSprint } from "@/actions/update-card-sprint";
 import { useAction } from "@/hooks/use-action";
-import Sprints from "@/util/sprints";
+import { useEpic } from "@/hooks/use-epic";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -54,6 +54,7 @@ interface SprintSelectProps {
 
 const SprintSelect = ({ children, cardId, boardId }: SprintSelectProps) => {
   const queryClient = useQueryClient();
+  const { getAllSprintNumbers } = useEpic();
 
   const { execute } = useAction(updateCardSprint, {
     onSuccess: (data) => {
@@ -77,11 +78,13 @@ const SprintSelect = ({ children, cardId, boardId }: SprintSelectProps) => {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Sprints</SelectLabel>
-          {Object.values(Sprints).map((sprint) => (
-            <SelectItem key={sprint} value={sprint}>
-              {sprint}
-            </SelectItem>
-          ))}
+          {getAllSprintNumbers()
+            .map((num) => num.toString())
+            .map((sprint) => (
+              <SelectItem key={sprint} value={sprint}>
+                {sprint}
+              </SelectItem>
+            ))}
         </SelectGroup>
       </SelectContent>
     </Select>

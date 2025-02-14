@@ -7,6 +7,7 @@ type EpicStore = {
   setEpics: (epics: Epic[]) => void;
   setSelectedEpic: (epic?: Epic) => void;
   getSprintNumbers: () => number[];
+  getAllSprintNumbers: () => number[];
 };
 
 export const useEpic = create<EpicStore>((set, get) => ({
@@ -36,5 +37,24 @@ export const useEpic = create<EpicStore>((set, get) => ({
     }
 
     return [];
+  },
+  getAllSprintNumbers: () => {
+    const epics = get().epics;
+    const selectedEpic = get().selectedEpic;
+    if (!selectedEpic) return [];
+    const sortedEpics = [...epics].sort((a, b) => a.order - b.order);
+
+    let sprintStart = 1;
+
+    const allSprints: number[] = [];
+
+    for (const epic of sortedEpics) {
+      allSprints.push(
+        ...Array.from({ length: epic.sprints }, (_, i) => sprintStart + i)
+      );
+      sprintStart += epic.sprints;
+    }
+
+    return allSprints;
   },
 }));

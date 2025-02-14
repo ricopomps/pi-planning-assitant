@@ -1,9 +1,11 @@
+"use client";
+
 import { ListContainer } from "@/app/(platform)/(dashboard)/board/[boardId]/_components/list-container";
+import { useEpic } from "@/hooks/use-epic";
 import {
   BoardWithListsAndDependencies,
   ListWithCardsAndDependencies,
 } from "@/types";
-import Sprints from "@/util/sprints";
 import { UsersRound } from "lucide-react";
 
 interface BoardsOverviewListProps {
@@ -11,22 +13,24 @@ interface BoardsOverviewListProps {
 }
 
 export const BoardsOverviewList = ({ boards }: BoardsOverviewListProps) => {
+  const { getSprintNumbers } = useEpic();
+
   return (
-    <div>
+    <div className="space-y-2">
       {boards.map((board) => {
-        const sprintLists: ListWithCardsAndDependencies[] = Object.values(
-          Sprints
-        ).map((sprint) => ({
-          id: sprint,
-          title: `Sprint ${sprint}`,
-          boardId: board.id,
-          cards: board.lists
-            .flatMap((list) => list.cards)
-            .filter((card) => card.sprint === parseInt(sprint)),
-          order: parseInt(sprint),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }));
+        const sprintLists: ListWithCardsAndDependencies[] = getSprintNumbers()
+          .map((num) => num.toString())
+          .map((sprint) => ({
+            id: sprint,
+            title: `Sprint ${sprint}`,
+            boardId: board.id,
+            cards: board.lists
+              .flatMap((list) => list.cards)
+              .filter((card) => card.sprint === parseInt(sprint)),
+            order: parseInt(sprint),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }));
         return (
           <div key={board.id} className="flex gap-2">
             <BoardCard boardTitle={board.title} />
