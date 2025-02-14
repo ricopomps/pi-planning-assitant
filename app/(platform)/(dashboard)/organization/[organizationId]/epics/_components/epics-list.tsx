@@ -1,10 +1,13 @@
 "use client";
 
+import { deleteEpic } from "@/actions/delete-epic";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAction } from "@/hooks/use-action";
 import { useEpic } from "@/hooks/use-epic";
 import { Epic } from "@/types";
 import { Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface EpicCardProps {
   epic: Epic;
@@ -50,9 +53,20 @@ export const EpicsList = () => {
     setEpics,
   } = useEpic();
 
+  const { execute } = useAction(deleteEpic, {
+    onSuccess: (removedEpic) => {
+      toast.success(`Epic ${removedEpic.title} deleted!`);
+
+      setEpics(epics.filter((epic) => epic.id !== removedEpic.id));
+      setSelectedEpic(undefined);
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
   const handleDelete = (epicId: string) => {
-    setEpics(epics.filter((epic) => epic.id !== epicId));
-    setSelectedEpic(undefined);
+    execute({ id: epicId });
   };
 
   const handleCreate = () => {

@@ -1,12 +1,16 @@
 "use client";
 
+import { createEpic as createEpicAction } from "@/actions/create-epic";
+import { updateEpic } from "@/actions/update-epic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAction } from "@/hooks/use-action";
 import { useEpic } from "@/hooks/use-epic";
 import { Epic } from "@/types";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const EpicsForm = () => {
   const {
@@ -24,32 +28,43 @@ export const EpicsForm = () => {
     !createEpic ? selectedEpic?.sprints || 6 : 6
   );
 
+  const { execute: executeCreateEpic } = useAction(createEpicAction, {
+    onSuccess: (newEpic) => {
+      toast.success("Epic created!");
+      setEpics([...epics, newEpic]);
+      setSelectedEpic(newEpic);
+      setCreateEpic(false);
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const { execute: executeUpdateEpic } = useAction(updateEpic, {
+    onSuccess: (updatedEpic) => {
+      toast.success("Epic updated!");
+
+      setEpics(
+        epics.map((epic) => (epic.id === updatedEpic.id ? updatedEpic : epic))
+      );
+      setSelectedEpic(updatedEpic);
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
   useEffect(() => {
     setTitle(!createEpic ? selectedEpic?.title || "" : "");
     setSprints(!createEpic ? selectedEpic?.sprints || 6 : 6);
   }, [selectedEpic, createEpic]);
 
   const handleUpdate = (updatedEpic: Epic) => {
-    setEpics(
-      epics.map((epic) =>
-        epic.id === updatedEpic.id
-          ? { ...epic, title: updatedEpic.title }
-          : epic
-      )
-    );
-    setSelectedEpic(updatedEpic);
+    executeUpdateEpic({ id: updatedEpic.id, title, sprints });
   };
 
-  const handleCreate = (newTitle: string) => {
-    const newEpic = {
-      id: crypto.randomUUID(),
-      title: newTitle,
-      order: epics.length + 6,
-      sprints,
-    };
-    setEpics([...epics, newEpic]);
-    setSelectedEpic(newEpic);
-    setCreateEpic(false);
+  const handleCreate = () => {
+    executeCreateEpic({ title, sprints });
   };
 
   const update = !createEpic && selectedEpic;
@@ -99,9 +114,9 @@ export const EpicsForm = () => {
         <Button
           onClick={() => {
             if (update) {
-              handleUpdate({ ...selectedEpic, title });
+              handleUpdate(selectedEpic);
             } else {
-              handleCreate(title);
+              handleCreate();
             }
             setTitle("");
           }}
