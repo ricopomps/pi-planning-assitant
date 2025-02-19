@@ -5,6 +5,7 @@ import { useAction } from "@/hooks/use-action";
 import { useEpic } from "@/hooks/use-epic";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import {
@@ -30,7 +31,11 @@ export const SprintTag = ({
 }: SprintTagProps) => {
   return (
     <Badge variant="secondary">
-      <SprintSelect cardId={cardId} boardId={boardId}>
+      <SprintSelect
+        cardId={cardId}
+        boardId={boardId}
+        initialSprint={sprintNumber}
+      >
         {!sprintNumber ? (
           <>
             Add to sprint <Plus className="ml-2 h-4 w-4" />
@@ -50,30 +55,44 @@ interface SprintSelectProps {
   children: React.ReactNode;
   cardId: string;
   boardId: string;
+  initialSprint?: number | null;
 }
 
-const SprintSelect = ({ children, cardId, boardId }: SprintSelectProps) => {
+const SprintSelect = ({
+  children,
+  cardId,
+  boardId,
+  initialSprint,
+}: SprintSelectProps) => {
   const queryClient = useQueryClient();
   const { getAllSprintNumbers } = useEpic();
+  const [selectedSprint, setSelectedSprint] = useState<string | undefined>(
+    initialSprint?.toString()
+  );
 
   const { execute } = useAction(updateCardSprint, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ["card", data.id],
-      });
-
       toast.success(`Updated card "${data.title}" to sprint "${data.sprint}"`);
+      setSelectedSprint(data.sprint?.toString());
+    },
+    onError: (error) => {
+      toast.error(error);
+      setSelectedSprint(initialSprint?.toString());
+    },
+    onComplete: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["card", cardId],
+      });
     },
   });
 
-  const onChange = (e: string) => {
-    const sprint = Number.parseInt(e);
-
-    execute({ id: cardId, boardId, sprint });
+  const onChange = (value: string) => {
+    setSelectedSprint(value);
+    execute({ id: cardId, boardId, sprint: Number(value) });
   };
 
   return (
-    <Select onValueChange={onChange}>
+    <Select onValueChange={onChange} value={selectedSprint}>
       <SelectTrigger minimal>{children}</SelectTrigger>
       <SelectContent>
         <SelectGroup>

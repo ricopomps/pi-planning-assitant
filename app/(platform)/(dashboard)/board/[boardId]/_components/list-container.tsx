@@ -53,6 +53,10 @@ export const ListContainer = ({
 
       toast.success(`Updated card "${data.title}" to sprint "${data.sprint}"`);
     },
+    onError: (error) => {
+      toast.error(error);
+      throw error;
+    },
   });
 
   useEffect(() => {
@@ -91,6 +95,7 @@ export const ListContainer = ({
 
     // User moves a card
     if (type === "card") {
+      const baseData = structuredClone(orderedData);
       const newOrderedData = [...orderedData];
 
       // Source and destination list
@@ -167,13 +172,14 @@ export const ListContainer = ({
         destinationList.cards.forEach((card, idx) => {
           card.order = idx;
         });
-
         setOrderedData(newOrderedData);
 
         executeUpdateCardSprint({
           boardId,
           id: movedCard.id,
           sprint: parseInt(destination.droppableId),
+        }).catch(() => {
+          setOrderedData(baseData);
         });
       }
     }
