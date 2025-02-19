@@ -9,7 +9,6 @@ import { useAction } from "@/hooks/use-action";
 import { CardWithList } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlignLeft } from "lucide-react";
-import { useParams } from "next/navigation";
 import { ElementRef, RefObject, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
@@ -20,7 +19,6 @@ interface DescriptionProps {
 
 export const Description = ({ data }: DescriptionProps) => {
   const queryClient = useQueryClient();
-  const params = useParams();
 
   const [isEditing, setIsEditing] = useState(false);
   const formRef = useRef<ElementRef<"form">>(null);
@@ -58,9 +56,8 @@ export const Description = ({ data }: DescriptionProps) => {
 
   const onSubmit = (formData: FormData) => {
     const description = formData.get("description") as string;
-    const boardId = params.boardId as string;
 
-    execute({ id: data.id, boardId, description });
+    execute({ id: data.id, boardId: data.list.boardId, description });
   };
 
   return (
