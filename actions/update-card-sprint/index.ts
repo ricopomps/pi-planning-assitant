@@ -18,10 +18,36 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   }
 
   const { id, boardId, sprint } = data;
-  let card;
+  let updatedCard;
 
   try {
-    card = await db.card.update({
+    const card = await db.card.findUnique({
+      where: { id },
+      include: {
+        dependencies: { select: { id: true, sprint: true } },
+        dependentOn: { select: { id: true, sprint: true } },
+      },
+    });
+
+    if (!card) {
+      return { error: "Card not found" };
+    }
+
+    const invalidDependencies = card.dependencies.some(
+      (dep) => dep.sprint !== null && dep.sprint >= sprint
+    );
+    if (invalidDependencies) {
+      return { error: "Cannot assign sprint before all dependencies" };
+    }
+
+    const invalidDependents = card.dependentOn.some(
+      (dep) => dep.sprint !== null && dep.sprint <= sprint
+    );
+    if (invalidDependents) {
+      return { error: "Cannot assign sprint after dependents" };
+    }
+
+    updatedCard = await db.card.update({
       where: {
         id,
         list: {
@@ -38,7 +64,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   }
 
   revalidatePath(buildRoute(AppRoutes.BOARD_ID, { boardId: boardId }));
-  return { data: card };
+  return { data: updatedCard };
 };
 
 export const updateCardSprint = createSafeAction(UpdateCardSprint, handler);

@@ -21,6 +21,31 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   let card;
 
   try {
+    const [cardToUpdate, dependencyCard] = await Promise.all([
+      db.card.findUnique({
+        where: { id },
+        select: { sprint: true },
+      }),
+      db.card.findUnique({
+        where: { id: dependencyCardId },
+        select: { sprint: true },
+      }),
+    ]);
+
+    if (!cardToUpdate || !dependencyCard) {
+      return { error: "One or both cards not found" };
+    }
+
+    if (
+      dependencyCard.sprint !== null &&
+      cardToUpdate.sprint !== null &&
+      dependencyCard.sprint >= cardToUpdate.sprint
+    ) {
+      return {
+        error: "Cannot add a dependency with an equal or greater sprint",
+      };
+    }
+
     card = await db.card.update({
       where: {
         id,
