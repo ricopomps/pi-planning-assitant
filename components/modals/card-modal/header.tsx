@@ -10,7 +10,6 @@ import { useAction } from "@/hooks/use-action";
 import { CardWithList } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { Layout } from "lucide-react";
-import { useParams } from "next/navigation";
 import { ElementRef, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -20,7 +19,7 @@ interface HeaderProps {
 
 export const Header = ({ data }: HeaderProps) => {
   const queryClient = useQueryClient();
-  const params = useParams();
+
   const { execute } = useAction(updateCard, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({
@@ -41,11 +40,10 @@ export const Header = ({ data }: HeaderProps) => {
 
   const onSubmit = (formData: FormData) => {
     const title = formData.get("title") as string;
-    const boardId = params.boardId as string;
 
     if (title === data.title) return;
 
-    execute({ title, boardId, id: data.id });
+    execute({ title, boardId: data.list.boardId, id: data.id });
   };
 
   return (

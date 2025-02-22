@@ -3,13 +3,12 @@
 import { updateCardAssignedTo } from "@/actions/update-card-assigned-to";
 import { useAction } from "@/hooks/use-action";
 import { fetcher } from "@/lib/fetcher";
+import { CardWithList } from "@/types";
 import { AppApiRoutes } from "@/util/appRoutes";
 import { User } from "@clerk/nextjs/server";
-import { Card } from "@prisma/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { User2 } from "lucide-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import {
@@ -23,13 +22,13 @@ import {
 } from "./ui/select";
 
 interface AssignedToTagProps {
-  card: Card;
+  card: CardWithList;
 }
 
 export const AssignedToTag = ({ card }: AssignedToTagProps) => {
-  const params = useParams();
+  const boardId = card.list.boardId;
   const { data: usersFromOrg } = useQuery<User[]>({
-    queryKey: ["organization", params.boardId],
+    queryKey: ["organization", boardId],
     queryFn: () => fetcher(AppApiRoutes.USERS_ORGANIZATION),
   });
 
@@ -39,7 +38,7 @@ export const AssignedToTag = ({ card }: AssignedToTagProps) => {
 
   return (
     <Badge variant="secondary">
-      <AssignedToSelect cardId={card.id} users={usersFromOrg}>
+      <AssignedToSelect cardId={card.id} boardId={boardId} users={usersFromOrg}>
         {!card.assignedTo || !assignedUser ? (
           <User2 className="h-4 w-4" />
         ) : (
@@ -54,6 +53,7 @@ interface AssignedToSelectProps {
   children: React.ReactNode;
   cardId: string;
   users?: User[];
+  boardId: string;
 }
 
 interface UserAvatarProps {
@@ -84,22 +84,20 @@ const AssignedToSelect = ({
   children,
   cardId,
   users,
+  boardId,
 }: AssignedToSelectProps) => {
   const queryClient = useQueryClient();
-  const params = useParams();
 
   const { execute } = useAction(updateCardAssignedTo, {
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["card", data.id],
       });
-      toast.success(`Assigned card"`);
+      toast.success(`Assigned card "${data.title}"`);
     },
   });
 
   const onChange = (e: string) => {
-    const boardId = params.boardId as string;
-
     execute({ id: cardId, boardId, assignedTo: e });
   };
 
